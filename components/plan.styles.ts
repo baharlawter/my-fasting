@@ -7,11 +7,3 @@ export const styles = StyleSheet.create({
     gap: 8,
   },
 });
-
-export const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    gap: 8,
-  },
-});
