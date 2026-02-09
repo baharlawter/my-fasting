@@ -1,8 +1,11 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useState } from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { Alert, StyleSheet, TouchableOpacity, View } from "react-native";
 
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
+
+const RECORDS_STORAGE_KEY = "fasting_records";
 
 function formatDuration(totalSeconds: number) {
   if (totalSeconds < 0) totalSeconds = 0;
@@ -65,7 +68,37 @@ export default function FastingScreen() {
   }
 
   function handleEnd() {
+    if (startAt && endAt) {
+      // Save the record
+      saveRecord(startAt, endAt);
+    }
     setRunning(false);
+  }
+
+  async function saveRecord(start: number, end: number) {
+    try {
+      const data = await AsyncStorage.getItem(RECORDS_STORAGE_KEY);
+      const records = data ? JSON.parse(data) : [];
+
+      const dateStr = new Date(start).toISOString().split("T")[0]; // YYYY-MM-DD
+      const durationMs = end - start;
+      const durationHours =
+        Math.round((durationMs / (1000 * 60 * 60)) * 10) / 10;
+
+      const newRecord = {
+        date: dateStr,
+        startTime: start,
+        endTime: end,
+        durationHours,
+      };
+
+      records.push(newRecord);
+      await AsyncStorage.setItem(RECORDS_STORAGE_KEY, JSON.stringify(records));
+
+      Alert.alert("Fast Saved!", `Duration: ${durationHours}h`);
+    } catch (error) {
+      console.error("Error saving record:", error);
+    }
   }
 
   return (
