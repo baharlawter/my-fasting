@@ -25,7 +25,7 @@ const PLANS = [
   },
 ];
 
-export default function PlansScreen() {
+export default function Plans() {
   return (
     <ThemedView style={styles.container}>
       <ThemedText type="title">Plan</ThemedText>
