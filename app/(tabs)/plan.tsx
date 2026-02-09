@@ -1,5 +1,6 @@
-import React from "react";
-import { StyleSheet, TouchableOpacity, View, ScrollView } from "react-native";
+import React, { useState, useEffect } from "react";
+import { ScrollView, StyleSheet, TouchableOpacity, View, Alert } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
@@ -8,6 +9,7 @@ const PLANS = [
   {
     id: "16:8",
     title: "16:8",
+    hours: 16,
     subtitle: "16 hours fast / 8 hours eat",
     benefits: "Best for beginners",
     color: "#FB6B6B",
@@ -15,6 +17,7 @@ const PLANS = [
   {
     id: "18:6",
     title: "18:6",
+    hours: 18,
     subtitle: "18 hours fast / 6 hours eat",
     benefits: "Moderate challenge",
     color: "#3AB0FF",
@@ -22,13 +25,41 @@ const PLANS = [
   {
     id: "20:4",
     title: "20:4",
+    hours: 20,
     subtitle: "20 hours fast / 4 hours eat",
     benefits: "Advanced fasting",
     color: "#7ED957",
   },
 ];
 
+const SELECTED_PLAN_KEY = "selected_fasting_plan";
+
 export default function Plans() {
+  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+
+  useEffect(() => {
+    loadSelectedPlan();
+  }, []);
+
+  const loadSelectedPlan = async () => {
+    try {
+      const plan = await AsyncStorage.getItem(SELECTED_PLAN_KEY);
+      setSelectedPlan(plan || "16:8");
+    } catch (error) {
+      console.error("Error loading selected plan:", error);
+    }
+  };
+
+  const handleSelectPlan = async (planId: string) => {
+    try {
+      await AsyncStorage.setItem(SELECTED_PLAN_KEY, planId);
+      setSelectedPlan(planId);
+      Alert.alert("Plan Selected", `You've selected the ${planId} fasting plan!`);
+    } catch (error) {
+      console.error("Error saving plan:", error);
+    }
+  };
+
   return (
     <ThemedView style={styles.container}>
       <ThemedText type="title">Plan</ThemedText>
@@ -40,11 +71,16 @@ export default function Plans() {
         {PLANS.map((plan) => (
           <TouchableOpacity
             key={plan.id}
-            style={[styles.card, { backgroundColor: plan.color }]}
+            style={[
+              styles.card,
+              { backgroundColor: plan.color },
+              selectedPlan === plan.id && styles.selectedCard,
+            ]}
             activeOpacity={0.85}
+            onPress={() => handleSelectPlan(plan.id)}
           >
             <View style={styles.cardHeader}>
-              <View>
+              <View style={{ flex: 1 }}>
                 <ThemedText
                   type="defaultSemiBold"
                   lightColor="#ffffff"
@@ -62,11 +98,12 @@ export default function Plans() {
                   {plan.subtitle}
                 </ThemedText>
               </View>
-              <ThemedText
-                style={styles.cardIcon}
-              >
-                ⏱️
-              </ThemedText>
+              <View style={styles.cardIconContainer}>
+                <ThemedText style={styles.cardIcon}>⏱️</ThemedText>
+                {selectedPlan === plan.id && (
+                  <ThemedText style={styles.checkmark}>✓</ThemedText>
+                )}
+              </View>
             </View>
             <View style={styles.cardDivider} />
             <ThemedText
@@ -85,7 +122,8 @@ export default function Plans() {
           💡 Tip
         </ThemedText>
         <ThemedText style={styles.infoText}>
-          Start with 16:8 and gradually increase your fasting window as you get more comfortable.
+          Start with 16:8 and gradually increase your fasting window as you get
+          more comfortable.
         </ThemedText>
       </View>
     </ThemedView>

@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { useEffect, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Alert,
   ScrollView,
@@ -28,6 +29,13 @@ export default function RecordScreen() {
   useEffect(() => {
     loadRecords();
   }, []);
+
+  // Reload records when screen is focused (coming back from Fasting tab)
+  useFocusEffect(
+    useCallback(() => {
+      loadRecords();
+    }, [])
+  );
 
   const loadRecords = async () => {
     try {
@@ -197,6 +205,13 @@ export default function RecordScreen() {
                 >
                   {day}
                 </ThemedText>
+                {record && (
+                  <ThemedText
+                    style={[styles.durationText, styles.recordedDayText]}
+                  >
+                    {record.durationHours}h
+                  </ThemedText>
+                )}
               </TouchableOpacity>
             );
           })}
@@ -291,6 +306,11 @@ const styles = StyleSheet.create({
   recordedDayText: {
     color: "#fff",
     fontWeight: "bold",
+  },
+  durationText: {
+    fontSize: 10,
+    marginTop: 2,
+    fontWeight: "600",
   },
   emptyDayText: {
     color: "transparent",

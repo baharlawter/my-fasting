@@ -6,6 +6,7 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 
 const RECORDS_STORAGE_KEY = "fasting_records";
+const SELECTED_PLAN_KEY = "selected_fasting_plan";
 
 function formatDuration(totalSeconds: number) {
   if (totalSeconds < 0) totalSeconds = 0;
@@ -23,13 +24,29 @@ function formatTimeStamp(ts?: number) {
 }
 
 export default function FastingScreen() {
-  // default fasting window (hours)
-  const DEFAULT_HOURS = 16;
-
+  const [fastingHours, setFastingHours] = useState(16); // default
   const [running, setRunning] = useState(false);
   const [startAt, setStartAt] = useState<number | null>(null);
   const [endAt, setEndAt] = useState<number | null>(null);
   const [now, setNow] = useState<number>(Date.now());
+
+  // Load selected plan on mount
+  useEffect(() => {
+    loadSelectedPlan();
+  }, []);
+
+  const loadSelectedPlan = async () => {
+    try {
+      const selectedPlan = await AsyncStorage.getItem(SELECTED_PLAN_KEY);
+      if (selectedPlan) {
+        // Extract hours from plan like "16:8" or "18:6"
+        const hours = parseInt(selectedPlan.split(":")[0], 10);
+        setFastingHours(hours);
+      }
+    } catch (error) {
+      console.error("Error loading selected plan:", error);
+    }
+  };
 
   // tick every second while running (or to keep UI live)
   useEffect(() => {
@@ -42,17 +59,17 @@ export default function FastingScreen() {
     // if running and start/end not set, initialize
     if (!startAt) {
       const s = Date.now();
-      const e = s + DEFAULT_HOURS * 60 * 60 * 1000;
+      const e = s + fastingHours * 60 * 60 * 1000;
       setStartAt(s);
       setEndAt(e);
     }
-  }, [running, startAt]);
+  }, [running, startAt, fastingHours]);
 
   // derived values
   const elapsedSeconds = startAt ? Math.floor((now - startAt) / 1000) : 0;
   const remainingSeconds = endAt
     ? Math.max(0, Math.floor((endAt - now) / 1000))
-    : DEFAULT_HOURS * 3600;
+    : fastingHours * 3600;
 
   // stop when finished
   useEffect(() => {
@@ -105,7 +122,7 @@ export default function FastingScreen() {
     <ThemedView style={styles.container}>
       <ThemedText type="title">Fasting</ThemedText>
       <ThemedText style={styles.lead}>
-        Start a fast and track elapsed/remaining time.
+        {fastingHours}-hour fast in progress
       </ThemedText>
 
       <View style={styles.timerContainer}>
