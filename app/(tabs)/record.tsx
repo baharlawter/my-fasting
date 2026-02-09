@@ -20,21 +20,31 @@ interface FastingRecord {
 }
 
 const STORAGE_KEY = "fasting_records";
+const SELECTED_PLAN_KEY = "selected_fasting_plan";
+
+const PLAN_COLORS: { [key: string]: string } = {
+  "16:8": "#A0522D",
+  "18:6": "#8B6F47",
+  "20:4": "#6B8E23",
+};
 
 export default function RecordScreen() {
   const [records, setRecords] = useState<FastingRecord[]>([]);
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [planColor, setPlanColor] = useState(PLAN_COLORS["16:8"]); // default to 16:8 color
 
   // Load records on mount
   useEffect(() => {
     loadRecords();
+    loadPlanColor();
   }, []);
 
   // Reload records when screen is focused (coming back from Fasting tab)
   useFocusEffect(
     useCallback(() => {
       loadRecords();
-    }, [])
+      loadPlanColor();
+    }, []),
   );
 
   const loadRecords = async () => {
@@ -45,6 +55,17 @@ export default function RecordScreen() {
       }
     } catch (error) {
       console.error("Error loading records:", error);
+    }
+  };
+
+  const loadPlanColor = async () => {
+    try {
+      const selectedPlan = await AsyncStorage.getItem(SELECTED_PLAN_KEY);
+      if (selectedPlan && PLAN_COLORS[selectedPlan]) {
+        setPlanColor(PLAN_COLORS[selectedPlan]);
+      }
+    } catch (error) {
+      console.error("Error loading plan color:", error);
     }
   };
 
@@ -177,7 +198,10 @@ export default function RecordScreen() {
                 style={[
                   styles.calendarDay,
                   day === null && styles.emptyDay,
-                  record && styles.recordedDay,
+                  record && [
+                    styles.recordedDay,
+                    { backgroundColor: planColor },
+                  ],
                 ]}
                 onPress={() => {
                   if (record) {
@@ -242,10 +266,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+    backgroundColor: "#FFFBF0",
   },
   lead: {
     marginTop: 8,
     marginBottom: 16,
+    color: "#5D4037",
   },
   monthHeader: {
     flexDirection: "row",
@@ -260,9 +286,12 @@ const styles = StyleSheet.create({
   navText: {
     fontSize: 24,
     fontWeight: "bold",
+    color: "#A0522D",
   },
   monthName: {
     fontSize: 16,
+    color: "#5D4037",
+    fontWeight: "600",
   },
   dayHeaderRow: {
     flexDirection: "row",
@@ -275,6 +304,8 @@ const styles = StyleSheet.create({
   },
   dayHeaderText: {
     fontSize: 12,
+    color: "#8B6F47",
+    fontWeight: "600",
   },
   calendarScroll: {
     flex: 1,

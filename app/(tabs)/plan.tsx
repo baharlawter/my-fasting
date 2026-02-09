@@ -1,6 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { ScrollView, StyleSheet, TouchableOpacity, View, Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useEffect, useState } from "react";
+import {
+  Alert,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
@@ -12,7 +18,7 @@ const PLANS = [
     hours: 16,
     subtitle: "16 hours fast / 8 hours eat",
     benefits: "Best for beginners",
-    color: "#FB6B6B",
+    color: "#A0522D",
   },
   {
     id: "18:6",
@@ -20,7 +26,7 @@ const PLANS = [
     hours: 18,
     subtitle: "18 hours fast / 6 hours eat",
     benefits: "Moderate challenge",
-    color: "#3AB0FF",
+    color: "#8B6F47",
   },
   {
     id: "20:4",
@@ -28,7 +34,7 @@ const PLANS = [
     hours: 20,
     subtitle: "20 hours fast / 4 hours eat",
     benefits: "Advanced fasting",
-    color: "#7ED957",
+    color: "#6B8E23",
   },
 ];
 
@@ -54,7 +60,10 @@ export default function Plans() {
     try {
       await AsyncStorage.setItem(SELECTED_PLAN_KEY, planId);
       setSelectedPlan(planId);
-      Alert.alert("Plan Selected", `You've selected the ${planId} fasting plan!`);
+      Alert.alert(
+        "Plan Selected",
+        `You've selected the ${planId} fasting plan!`,
+      );
     } catch (error) {
       console.error("Error saving plan:", error);
     }
@@ -134,23 +143,28 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+    backgroundColor: "#FFFBF0",
   },
   lead: {
     marginTop: 8,
     marginBottom: 16,
+    color: "#5D4037",
+    fontSize: 15,
   },
   list: {
     flex: 1,
   },
   card: {
     padding: 18,
-    borderRadius: 16,
+    borderRadius: 8,
     marginBottom: 14,
+    borderWidth: 2,
+    borderColor: "rgba(0,0,0,0.1)",
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.12,
-    shadowRadius: 12,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
   },
   cardHeader: {
     flexDirection: "row",
@@ -182,16 +196,20 @@ const styles = StyleSheet.create({
   },
   info: {
     padding: 14,
-    backgroundColor: "rgba(0,0,0,0.03)",
-    borderRadius: 12,
+    backgroundColor: "#F5E6D3",
+    borderRadius: 8,
+    borderLeftWidth: 4,
+    borderLeftColor: "#A0522D",
     marginBottom: 8,
   },
   infoTitle: {
     fontSize: 14,
     marginBottom: 6,
+    color: "#5D4037",
   },
   infoText: {
     fontSize: 13,
     lineHeight: 18,
+    color: "#5D4037",
   },
 });

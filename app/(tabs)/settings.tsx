@@ -1,5 +1,7 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useState } from "react";
 import {
+  Alert,
   ScrollView,
   StyleSheet,
   Switch,
@@ -13,6 +15,57 @@ import { ThemedView } from "@/components/themed-view";
 export default function SettingsScreen() {
   const [notifications, setNotifications] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
+
+  const handleClearRecords = () => {
+    Alert.alert(
+      "Clear All Records",
+      "Are you sure you want to delete all fasting records? This cannot be undone.",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Clear",
+          onPress: async () => {
+            try {
+              await AsyncStorage.removeItem("fasting_records");
+              Alert.alert("Success", "All records have been cleared.");
+            } catch (error) {
+              console.error("Error clearing records:", error);
+            }
+          },
+          style: "destructive",
+        },
+      ]
+    );
+  };
+
+  const handleResetApp = () => {
+    Alert.alert(
+      "Reset App",
+      "This will clear all data including records and plan selection. This cannot be undone.",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Reset",
+          onPress: async () => {
+            try {
+              await AsyncStorage.removeItem("fasting_records");
+              await AsyncStorage.removeItem("selected_fasting_plan");
+              Alert.alert("Success", "App has been reset.");
+            } catch (error) {
+              console.error("Error resetting app:", error);
+            }
+          },
+          style: "destructive",
+        },
+      ]
+    );
+  };
 
   return (
     <ThemedView style={styles.container}>
@@ -69,7 +122,11 @@ export default function SettingsScreen() {
 
         {/* Action Buttons */}
         <View style={styles.section}>
-          <TouchableOpacity style={styles.actionButton} activeOpacity={0.7}>
+          <TouchableOpacity
+            style={styles.actionButton}
+            activeOpacity={0.7}
+            onPress={handleClearRecords}
+          >
             <ThemedText style={styles.actionButtonText}>
               Clear All Records
             </ThemedText>
@@ -77,6 +134,7 @@ export default function SettingsScreen() {
           <TouchableOpacity
             style={[styles.actionButton, styles.dangerButton]}
             activeOpacity={0.7}
+            onPress={handleResetApp}
           >
             <ThemedText style={styles.dangerButtonText}>Reset App</ThemedText>
           </TouchableOpacity>
@@ -90,10 +148,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+    backgroundColor: "#FFFBF0",
   },
   lead: {
     marginTop: 8,
     marginBottom: 16,
+    color: "#5D4037",
   },
   content: {
     flex: 1,
@@ -104,6 +164,8 @@ const styles = StyleSheet.create({
   sectionTitle: {
     marginBottom: 12,
     fontSize: 16,
+    color: "#5D4037",
+    fontWeight: "600",
   },
   settingItem: {
     flexDirection: "row",
@@ -111,11 +173,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 12,
     paddingHorizontal: 12,
-    backgroundColor: "rgba(0,0,0,0.03)",
-    borderRadius: 12,
+    backgroundColor: "#F5E6D3",
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#E8DCC4",
   },
   settingLabel: {
     fontSize: 15,
+    color: "#5D4037",
   },
   infoItem: {
     flexDirection: "row",
@@ -123,36 +188,40 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 12,
     paddingHorizontal: 12,
-    backgroundColor: "rgba(0,0,0,0.03)",
-    borderRadius: 12,
+    backgroundColor: "#F5E6D3",
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#E8DCC4",
   },
   infoLabel: {
     fontSize: 15,
+    color: "#5D4037",
   },
   infoValue: {
     fontSize: 15,
     fontWeight: "600",
+    color: "#8B6F47",
   },
   actionButton: {
     paddingVertical: 14,
     paddingHorizontal: 16,
-    backgroundColor: "#3AB0FF",
-    borderRadius: 12,
+    backgroundColor: "#8B6F47",
+    borderRadius: 8,
     alignItems: "center",
     marginBottom: 10,
   },
   actionButtonText: {
-    color: "#fff",
+    color: "#FFFBF0",
     fontSize: 16,
     fontWeight: "600",
   },
   dangerButton: {
-    backgroundColor: "rgba(251,107,107,0.1)",
-    borderWidth: 1,
-    borderColor: "#FB6B6B",
+    backgroundColor: "#F5E6D3",
+    borderWidth: 2,
+    borderColor: "#A0522D",
   },
   dangerButtonText: {
-    color: "#FB6B6B",
+    color: "#A0522D",
     fontSize: 16,
     fontWeight: "600",
   },
