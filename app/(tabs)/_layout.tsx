@@ -26,15 +26,7 @@ export default function TabLayout() {
           ),
         }}
       />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: "Explore",
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="paperplane.fill" color={color} />
-          ),
-        }}
-      />
+      {/* Removed Explore tab to keep tabs simple: Home, Fasting, Plan, Record, Setting */}
       <Tabs.Screen
         name="fasting"
         options={{
@@ -47,7 +39,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="plan"
         options={{
-          title: "Plan",
+          title: "Plans",
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="list.bullet" color={color} />
           ),
@@ -65,7 +57,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="settings"
         options={{
-          title: "Settings",
+          title: "Setting",
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="gearshape.fill" color={color} />
           ),
