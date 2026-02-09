@@ -4,10 +4,31 @@ import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 
+const PLANS = [
+  {
+    id: "16:8",
+    title: "16:8",
+    subtitle: "16 hours fast / 8 hours eat",
+    color: "#FB6B6B",
+  },
+  {
+    id: "18:6",
+    title: "18:6",
+    subtitle: "18 hours fast / 6 hours eat",
+    color: "#3AB0FF",
+  },
+  {
+    id: "20:4",
+    title: "20:4",
+    subtitle: "20 hours fast / 4 hours eat",
+    color: "#7ED957",
+  },
+];
+
 export default function PlansScreen() {
   return (
     <ThemedView style={styles.container}>
-      <ThemedText type="title">Plans</ThemedText>
+      <ThemedText type="title">Plan</ThemedText>
       <ThemedText type="subtitle" style={styles.lead}>
         Choose a fasting window that fits your routine.
       </ThemedText>
@@ -42,27 +63,6 @@ export default function PlansScreen() {
   );
 }
 
-const PLANS = [
-  {
-    id: "16:8",
-    title: "16:8",
-    subtitle: "16 hours fast / 8 hours eat",
-    color: "#FB6B6B",
-  },
-  {
-    id: "18:6",
-    title: "18:6",
-    subtitle: "18 hours fast / 6 hours eat",
-    color: "#3AB0FF",
-  },
-  {
-    id: "20:4",
-    title: "20:4",
-    subtitle: "20 hours fast / 4 hours eat",
-    color: "#7ED957",
-  },
-];
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -79,7 +79,6 @@ const styles = StyleSheet.create({
     padding: 18,
     borderRadius: 16,
     marginBottom: 16,
-    // elevation / shadow
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.12,
