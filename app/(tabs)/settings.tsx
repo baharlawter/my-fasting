@@ -37,7 +37,7 @@ export default function SettingsScreen() {
           },
           style: "destructive",
         },
-      ]
+      ],
     );
   };
 
@@ -63,7 +63,7 @@ export default function SettingsScreen() {
           },
           style: "destructive",
         },
-      ]
+      ],
     );
   };
 
